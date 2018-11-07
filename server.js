@@ -3,11 +3,22 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const helmet = require('helmet');
+const mongoose = require('mongoose');
 const api = require('./routes/apiController');
 
 app.use(express.static('public'));
 
-app.use(api,'/api');
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+
+mongoose.connect(process.env.DB, {useNewUrlParser: true });
+mongoose.connection.once('open',()=>{
+    console.log("Connected to Mongo via Mongoose")
+    }).on('error',(err) => console.log("Connection Error: " + err));
+
+
+app.use('/api', api);
 app.get('/', (req,res) => res.sendFile(__dirname + '/public/index.html'));
 
 app.listen(3000, () => console.log('ON') );
@@ -26,5 +37,4 @@ I can delete a post(just changing the text to '[deleted]') if I send a DELETE re
 I can report a thread and change it's reported value to true by sending a PUT request to /api/threads/{board} and pass along the thread_id. (Text response will be 'success')
 I can report a reply and change it's reported value to true by sending a PUT request to /api/replies/{board} and pass along the thread_id & reply_id. (Text response will be 'success')
 Complete functional tests that wholely test routes and pass.
-
-/*
+*/

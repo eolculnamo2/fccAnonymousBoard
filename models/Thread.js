@@ -7,7 +7,8 @@ let Thread = new Schema({
     bumped_on: String,
     reported: Boolean, 
     delete_password: String,
-    replies: Array
+    replies: Array,
+    board: String
 })
 
 module.exports = mongoose.model('threads', Thread);
