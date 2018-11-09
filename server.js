@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const mongoose = require('mongoose');
 const api = require('./routes/apiController');
 
-app.use(express.static('public'));
+app.use(express.static('dist'));
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -20,6 +20,7 @@ mongoose.connection.once('open',()=>{
 
 app.use('/api', api);
 app.get('/', (req,res) => res.sendFile(__dirname + '/public/index.html'));
+app.get('/b/', (req,res) => res.sendFile(__dirname + '/public/pages.html'));
 
 app.listen(3000, () => console.log('ON') );
 

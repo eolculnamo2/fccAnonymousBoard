@@ -5,16 +5,23 @@ class ThreadServices {
         if(!board || board.trim().length === 0){
             board = 'general';
         }
-        console.log(board);
-    //    new Thread({
-    //         text: text,
-    //         created_on: new Date(),
-    //         bumped_on: new Date(),
-    //         reported: false, 
-    //         delete_password: pw,
-    //         replies: [],
-    //         board: board
-    //    }).save();
+
+       new Thread({
+            text: text,
+            created_on: new Date(),
+            bumped_on: new Date(),
+            reported: false, 
+            delete_password: pw,
+            replies: [],
+            board: board
+       }).save();
+    }
+
+    getThreads(res, board) {
+        Thread.find({}, (err,response) => {
+            let send = response.filter( x => x.board === board);
+            res.send(send);
+        })
     }
 }
 
