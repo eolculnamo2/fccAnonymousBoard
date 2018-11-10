@@ -6,6 +6,10 @@ const helmet = require('helmet');
 const mongoose = require('mongoose');
 const api = require('./routes/apiController');
 
+app.use(helmet.frameguard({ action: 'sameorigin' }));
+app.use(helmet.dnsPrefetchControl());
+app.use(helmet.referrerPolicy({ policy: 'same-origin' }));
+
 app.use(express.static('dist'));
 
 mongoose.set('useNewUrlParser', true);

@@ -13,7 +13,7 @@ class App extends React.Component {
 
     callThreads() {
         let path = window.location.pathname.split('/');
-        console.log(path);
+
         let board;
         if(path.length > 0 && path[1] === 'b') {
             board = path[2] ? path[2] : 'general';
@@ -50,6 +50,53 @@ class App extends React.Component {
             })
     }
 
+    reportReply (threadId, replyId){
+        let url = '/api/replies/'+this.state.board;
+ 
+        let payload = {
+            threadId: threadId,
+            replyId: replyId
+        }
+ 
+         fetch(url,
+             {
+                 method: "PUT",
+                 body: JSON.stringify(payload),
+                 headers: { "Content-Type": "application/json" }
+             })
+     }
+
+     showAllReplies(id, threadIndex) {
+        let url = '/api/replies/'+this.state.board + '?thread_id='+id
+
+        fetch(url)
+        .then( res => res.json())
+        .then( data => {
+            let newThreadArr = this.state.threads;
+            newThreadArr[threadIndex] = data;
+            console.log(newThreadArr);
+            this.setState({threads: newThreadArr});
+        })
+     }
+
+     deleteReply (threadId, replyId){
+        let url = '/api/replies/'+this.state.board;
+        let password = prompt("Enter delete password");
+
+        let payload = {
+            threadId: threadId,
+            replyId: replyId,
+            password: password
+        }
+ 
+         fetch(url,
+             {
+                 method: "DELETE",
+                 body: JSON.stringify(payload),
+                 headers: { "Content-Type": "application/json" }
+             })
+     }
+
     deleteThread(id) {
         let url = '/api/threads/'+this.state.board;
         let pw = prompt("Enter Delete Password")
@@ -67,10 +114,38 @@ class App extends React.Component {
             })
         .then( res => res.json())
         .then( data => {
-            data.success === true ? alert("Deleted") : alert("Incorrect Password");
+            if(data.success) {
+                alert("Deleted");
+                location.reload();
+            }
+            else {
+                alert("Incorrect Password");
+            }            
         })
     }
 
+    postReply(id, i) {
+        let url = '/api/replies/'+this.state.board;
+        let password = prompt("Enter delete password")
+        let payload = {
+            id: id,
+            reply: {
+                text: document.getElementById('textarea-'+i).value,
+                delete_password: password,
+                reported: false
+            }
+        }
+        fetch(url,
+            {
+                method: "POST",
+                body: JSON.stringify(payload),
+                headers: { "Content-Type": "application/json" }
+            })
+        .then( res => res.json())
+        .then( data => {
+            location.reload();
+        })
+    }
     render(){
         return(
             <div>
@@ -85,8 +160,18 @@ class App extends React.Component {
                         <button type="button" onClick={this.reportThread.bind(this, x._id)}>Report Thread</button><br/>
                         <button type="button" onClick={this.deleteThread.bind(this, x._id)}>Delete Thread</button>
                         <p>{x.text}</p>
+                        <b>Post Reply</b><br/>
+                        <textarea id={"textarea-"+i} /><br/>
+                        <button onClick={this.showAllReplies.bind(this,x._id, i)} style={{display: x.replies.length > 2 ? 'block' : 'none'}}>Show All Replies</button>
+                        <button onClick={this.postReply.bind(this, x._id, i)}>REPLY</button><br/>
                         {x.replies.map((y,j) => {
-                            return(<div key={'y'+j}  style={{padding: '1em', border: '1px solid #333'}}>{y.text}</div>)
+                            return(<div key={'y'+j}  style={{padding: '1em', border: '1px solid #333'}}>
+                            <em>ID: {y.id}</em><br/>
+                            <em>Reported: {y.reported ? 'Reported' : 'Not Reported'}</em><br/>
+                            <button onClick={this.reportReply.bind(this, x._id, y.id)}>Report Reply</button>
+                            <button onClick={this.deleteReply.bind(this, x._id, y.id)}>Delete Reply</button>
+                            <p>{y.text}</p>
+                            </div>)
                         })}
                    </div>
                 )
@@ -95,19 +180,5 @@ class App extends React.Component {
         )
     }
 }
-
-/*
-{
-      "replies": [],
-      "_id": "5be50844af1ddd326484edb0",
-      "text": "This is my first board post",
-      "created_on": "Thu Nov 08 2018 22:08:36 GMT-0600 (CST)",
-      "bumped_on": "Thu Nov 08 2018 22:08:36 GMT-0600 (CST)",
-      "reported": false,
-      "delete_password": "anonymoous",
-      "board": "general",
-      "__v": 0
-   }
-*/
 
 export default App

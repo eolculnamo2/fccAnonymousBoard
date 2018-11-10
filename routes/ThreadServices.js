@@ -21,6 +21,10 @@ class ThreadServices {
     getThreads(res, board) {
         Thread.find({}, (err,response) => {
             let send = response.filter( x => x.board === board);
+            send.forEach( x => {
+                x.replies = x.replies.slice(0,3)
+            })
+
             res.send(send);
         })
     }

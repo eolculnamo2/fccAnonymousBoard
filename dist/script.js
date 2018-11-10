@@ -26,5 +26,5 @@ function newThread() {
         body: JSON.stringify(payload),
         headers: { "Content-Type": "application/json" }
       })
-    .then(()=> window.location.replace("http://localhost:3000/b/"+board));
+    .then(()=> window.location.pathname= "/b/"+board );
 } 
