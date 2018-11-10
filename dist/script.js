@@ -14,9 +14,11 @@ function newThread() {
     }
     
     let url = '/api/threads/';
+    let board = 'general'
     if(document.getElementById('new-thread-board').value) {
-        url += document.getElementById('new-thread-board').value;
-    }  
+        board = document.getElementById('new-thread-board').value;
+    }
+    url+=board;
 
     fetch(url,
     {
@@ -24,4 +26,5 @@ function newThread() {
         body: JSON.stringify(payload),
         headers: { "Content-Type": "application/json" }
       })
-}
+    .then(()=> window.location.replace("http://localhost:3000/b/"+board));
+} 

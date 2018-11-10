@@ -20,7 +20,7 @@ mongoose.connection.once('open',()=>{
 
 app.use('/api', api);
 app.get('/', (req,res) => res.sendFile(__dirname + '/public/index.html'));
-app.get('/b/', (req,res) => res.sendFile(__dirname + '/public/pages.html'));
+app.get('/b/:board', (req,res) => res.sendFile(__dirname + '/public/pages.html'));
 
 app.listen(3000, () => console.log('ON') );
 
